@@ -1,8 +1,7 @@
-MAILER = ./mailer.rb
-FILES = gdb/fact/fact.gdb gdb/llist/llist.gdb llist/llist.c
+FILES = TEAMINFO gdb/fact/fact.gdb gdb/llist/llist.gdb llist/llist.c
 
 handin:
-	@$(MAILER) $(FILES)
+	@./handin.rb cs351 gdblab $(FILES)
 
 clean:
 	rm -f *~ *.o llist
