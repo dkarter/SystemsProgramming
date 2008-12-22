@@ -1,13 +1,13 @@
 /*
  * mm-naive.c - The fastest, least memory-efficient malloc package.
  * 
- * In this naive approach, a block is allocated by simply incrementing
- * the brk pointer.  A block is pure payload. There are no headers or
- * footers.  Blocks are never coalesced or reused. Realloc is
- * implemented directly using mm_malloc and mm_free.
+ * Modify the lines below with your own name(s) and e-mail(s).
  *
- * NOTE TO STUDENTS: Replace this header comment with your own header
- * comment that gives a high level description of your solution.
+ * Double check your e-mail address, as it is where I will be sending your
+ * lab feedback!
+ *
+ * names  = Clark Kent, Bruce Wayne
+ * emails = ckent@iit.edu, bwayne@iit.edu
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,23 +17,6 @@
 
 #include "mm.h"
 #include "memlib.h"
-
-/*********************************************************
- * NOTE TO STUDENTS: Before you do anything else, please
- * provide your team information in the following struct.
- ********************************************************/
-team_t team = {
-    /* Team name */
-    "",
-    /* First member's full name */
-    "",
-    /* First member's email address */
-    "",
-    /* Second member's full name (leave blank if none) */
-    "",
-    /* Second member's email address (leave blank if none) */
-    ""
-};
 
 /* single word (4) or double word (8) alignment */
 #define ALIGNMENT 8
@@ -60,7 +43,7 @@ void *mm_malloc(size_t size)
 {
     int newsize = ALIGN(size + SIZE_T_SIZE);
     void *p = mem_sbrk(newsize);
-    if ((int)p == -1)
+    if ((long)p == -1)
 	return NULL;
     else {
         *(size_t *)p = size;
@@ -94,17 +77,3 @@ void *mm_realloc(void *ptr, size_t size)
     mm_free(oldptr);
     return newptr;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

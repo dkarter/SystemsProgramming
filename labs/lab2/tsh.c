@@ -1,7 +1,13 @@
 /* 
  * tsh - A tiny shell program with job control
  * 
- * <Put your name and login ID here>
+ * Modify the lines below with your own name(s) and e-mail(s).
+ *
+ * Double check your e-mail address, as it is where I will be sending your
+ * lab feedback!
+ *
+ * names  = Clark Kent, Bruce Wayne
+ * emails = ckent@iit.edu, bwayne@iit.edu
  */
 #include <stdio.h>
 #include <stdlib.h>

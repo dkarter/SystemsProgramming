@@ -1,6 +1,4 @@
 # Students' Makefile for the Malloc Lab
-MAILER    = ./mailer.rb
-
 CC = gcc
 CFLAGS = -Wall -O2
 
@@ -18,7 +16,7 @@ ftimer.o: ftimer.c ftimer.h config.h
 clock.o: clock.c clock.h
 
 handin:
-	@$(MAILER) mm.c
+	@./handin.rb cs351 malloclab mm.c
 
 clean:
 	rm -f *~ *.o mdriver

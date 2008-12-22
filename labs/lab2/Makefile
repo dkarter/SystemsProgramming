@@ -1,7 +1,6 @@
 # Makefile for the CS:APP Shell Lab
 
 DRIVER = ./sdriver.pl
-MAILER = ./mailer.rb
 TSH = ./tsh
 TSHREF = ./tshref
 TSHARGS = "-p"
@@ -84,7 +83,7 @@ rtest16:
 	$(DRIVER) -t trace16.txt -s $(TSHREF) -a $(TSHARGS)
 
 handin:
-	@$(MAILER) tsh.c	
+	@./handin.rb cs351 shlab tsh.c	
 
 
 # clean up
