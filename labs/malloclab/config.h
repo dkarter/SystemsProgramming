@@ -43,7 +43,7 @@
  * to their score.  This deters students from building extremely fast,
  * but extremely stupid malloc packages.
  */
-#define AVG_LIBC_THRUPUT      665E3  /* 2500 Kops/sec */
+#define AVG_LIBC_THRUPUT      3000E3  /* 2500 Kops/sec */
 
  /* 
   * This constant determines the contributions of space utilization
