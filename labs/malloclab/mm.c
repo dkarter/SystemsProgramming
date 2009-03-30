@@ -1,13 +1,13 @@
 /*
  * mm-naive.c - The fastest, least memory-efficient malloc package.
  * 
- * Modify the lines below with your own name(s) and e-mail(s).
+ * Modify the lines below with your own name and e-mail address.
  *
  * Double check your e-mail address, as it is where I will be sending your
  * lab feedback!
  *
- * names  = Clark Kent, Bruce Wayne
- * emails = ckent@iit.edu, bwayne@iit.edu
+ * name  = Clark Kent
+ * email = ckent@iit.edu
  */
 #include <stdio.h>
 #include <stdlib.h>
