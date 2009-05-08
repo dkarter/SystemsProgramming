@@ -1,0 +1,6 @@
+# trace19.txt - Tests whether the shell correctly implements input
+#		redirection
+#
+
+/bin/echo tsh> /usr/bin/sort -r < /etc/passwd
+/usr/bin/sort -r < /etc/passwd

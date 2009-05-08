@@ -1,0 +1,13 @@
+#
+# trace17.txt - Tests whether the shell correctly implements output
+#		redirection.
+#
+
+/bin/echo tsh> /bin/rm -f ls_out.txt
+/bin/rm -f ls_out.txt
+
+/bin/echo tsh> /bin/ls > ls_out.txt
+/bin/ls > ls_out.txt
+
+/bin/echo tsh> /bin/cat ls_out.txt
+/bin/cat > ls_out.txt

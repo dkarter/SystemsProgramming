@@ -1,0 +1,13 @@
+#
+# trace18.txt - Tests whether the shell correctly implements output
+#		redirection when the command is given flags
+#
+
+/bin/echo tsh> /bin/rm -f ls_out.txt
+/bin/rm -f ls_out.txt
+
+/bin/echo tsh> /bin/ls -l > ls_out.txt
+/bin/ls -l > ls_out.txt
+
+/bin/echo tsh> /bin/cat ls_out.txt
+/bin/cat > ls_out.txt

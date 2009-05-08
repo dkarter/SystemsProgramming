@@ -47,6 +47,14 @@ test15:
 	$(DRIVER) -t trace15.txt -s $(TSH) -a $(TSHARGS)
 test16:
 	$(DRIVER) -t trace16.txt -s $(TSH) -a $(TSHARGS)
+test17:
+	$(DRIVER) -t trace17.txt -s $(TSH) -a $(TSHARGS)
+test18:
+	$(DRIVER) -t trace18.txt -s $(TSH) -a $(TSHARGS)
+test19:
+	$(DRIVER) -t trace19.txt -s $(TSH) -a $(TSHARGS)
+test20:
+	$(DRIVER) -t trace20.txt -s $(TSH) -a $(TSHARGS)
 
 # Run the tests using the reference shell program
 rtest01:

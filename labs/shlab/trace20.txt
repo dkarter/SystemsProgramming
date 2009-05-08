@@ -1,0 +1,9 @@
+#
+# trace20.txt - Tests whether the shell properly implements pipes.
+#
+
+/bin/echo tsh> /bin/ls | /usr/bin/wc
+/bin/ls | /usr/bin/wc
+
+/bin/echo tsh> /bin/ls -l | /usr/bin/wc -c
+/bin/ls -l | /usr/bin/wc -c
