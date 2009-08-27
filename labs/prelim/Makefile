@@ -7,7 +7,7 @@ hello: $(OBJS)
 	$(CC) $(CFLAGS) -o hello $(OBJS)
 
 handin:
-	@./handin.rb cs351 prelims $(FILES)
+	@./handin.rb cs351 prelimlab $(FILES)
 
 clean:
 	rm -f *~ *.o hello
