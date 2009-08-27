@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -O2
+CFLAGS = -g -Wall
 OBJS = llist.o
 
 llist: $(OBJS)
