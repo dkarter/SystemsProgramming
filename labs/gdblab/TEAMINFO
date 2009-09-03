@@ -1,6 +1,6 @@
 # Team information file
 #
-# Change the lines below to list your own comma separated name(s) and e-mail(s).
+# Change the lines below to list your own name and e-mail address
 #
-names  = Clark Kent, Bruce Wayne
-emails = ckent@iit.edu, bwayne@iit.edu
+names  = Clark Kent
+emails = ckent@iit.edu
