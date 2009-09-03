@@ -3,8 +3,8 @@
  * 
  * Modify the lines below with your own name and e-mail.
  *
- * names  = Clark Kent
- * emails = ckent@iit.edu
+ * names  = Michael Lee
+ * emails = lee@iit.edu
  */
 #include <stdio.h>
 
