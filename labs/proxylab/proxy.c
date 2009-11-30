@@ -1,13 +1,11 @@
 /*
- * proxy.c - CS:APP Web proxy
+ * DO THIS FIRST: replace the following line with your own name & e-mail
  *
- * TEAM MEMBERS:
- * List team members here.
+ * Peter Parker <parker@iit.edu>
  * 
  * IMPORTANT: Give a high level description of your code here. You
  * must also provide a header comment at the beginning of each
  * function that describes what that function does.
- * GET http://www.iit.edu/ HTTP/1.1
  */ 
 
 #include "csapp.h"
