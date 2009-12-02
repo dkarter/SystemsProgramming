@@ -3,7 +3,7 @@ INSTALLOPT = --backup=t -m 644
 
 CC = gcc
 CFLAGS = -Wall -g 
-LDFLAGS = 
+LDFLAGS =  -l pthread
 
 OBJS = proxy.o csapp.o
 
