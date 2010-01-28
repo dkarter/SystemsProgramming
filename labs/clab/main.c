@@ -4,11 +4,10 @@
 
 int main (int argc, char *argv[]) {
 	/* 
-	 * programatically constructing the following simple graph:
+	 * Programatically constructing the following simple graph:
 	 *
-	 * A <--> B <--> C
-	 *
-	 * where all edge weights = 10
+	 *     10         5
+	 * A <-----> B <-----> C
 	 *
 	 * Delete this code and add your own!
 	 */
@@ -36,11 +35,12 @@ int main (int argc, char *argv[]) {
 	adj_v->edge_weight = 10;
 	adj_v = adj_v->next = malloc(sizeof(adj_vertex_t));
 	adj_v->vertex = v3;
-	adj_v->edge_weight = 10;
+	adj_v->edge_weight = 5;
+	adj_v->next = NULL;
 
 	adj_v = v3->adj_list = malloc(sizeof(adj_vertex_t));
 	adj_v->vertex = v2;
-	adj_v->edge_weight = 10;
+	adj_v->edge_weight = 5;
 	adj_v->next = NULL;
 
 	/* print out our adjacency list */
