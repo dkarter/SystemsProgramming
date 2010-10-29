@@ -2,5 +2,5 @@
 #		redirection
 #
 
-/bin/echo tsh> /usr/bin/sort -r < /etc/passwd
+/bin/echo -e 'tsh\076 /usr/bin/sort -r \074 /etc/passwd'
 /usr/bin/sort -r < /etc/passwd
