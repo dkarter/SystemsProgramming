@@ -5,7 +5,7 @@ TSH = ./tsh
 TSHREF = ./tshref
 TSHARGS = "-p"
 CC = gcc
-CFLAGS = -Wall -O2 -g
+CFLAGS = -Wall -g
 FILES = $(TSH) ./myspin ./mysplit ./mystop ./myint
 
 all: $(FILES)
@@ -89,10 +89,6 @@ rtest15:
 	$(DRIVER) -t trace15.txt -s $(TSHREF) -a $(TSHARGS)
 rtest16:
 	$(DRIVER) -t trace16.txt -s $(TSHREF) -a $(TSHARGS)
-
-handin:
-	@./handin.rb cs351 shlab tsh.c	
-
 
 # clean up
 clean:

@@ -5,7 +5,7 @@ TSH = ./tsh
 TSHREF = /bin/sh
 TSHARGS = "-p"
 CC = gcc
-CFLAGS = -Wall -O2 -g
+CFLAGS = -Wall -g
 FILES = $(TSH) ls_out.txt
 
 all: $(FILES)
@@ -33,10 +33,6 @@ rtest03:
 	$(DRIVER) -t trace03.txt -s $(TSHREF) -a $(TSHARGS)
 rtest04:
 	$(DRIVER) -t trace04.txt -s $(TSHREF) -a $(TSHARGS)
-
-handin:
-	@./handin.rb cs351 shlab tsh.c	
-
 
 # clean up
 clean:

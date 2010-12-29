@@ -1,13 +1,5 @@
 /*
  * mm-naive.c - The fastest, least memory-efficient malloc package.
- * 
- * Modify the lines below with your own name and e-mail address.
- *
- * Double check your e-mail address, as it is where I will be sending your
- * lab feedback!
- *
- * name  = Clark Kent
- * email = ckent@iit.edu
  */
 #include <stdio.h>
 #include <stdlib.h>

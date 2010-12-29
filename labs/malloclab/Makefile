@@ -15,8 +15,5 @@ fcyc.o: fcyc.c fcyc.h
 ftimer.o: ftimer.c ftimer.h config.h
 clock.o: clock.c clock.h
 
-handin:
-	@./handin.rb cs351 malloclab mm.c
-
 clean:
 	rm -f *~ *.o mdriver

@@ -17,9 +17,6 @@ csapp.o: csapp.c
 proxy.o: proxy.c
 	$(CC) $(CFLAGS) -c proxy.c
 
-handin:
-	@./handin.rb cs351 proxylab proxy.c	
-
 clean:
 	rm -f *~ *.o proxy core
 

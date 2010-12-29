@@ -1,9 +1,4 @@
-/*
- * DO THIS FIRST: replace the following line with your own name & e-mail
- *
- * Peter Parker <parker@iit.edu>
- * 
- * IMPORTANT: Give a high level description of your code here. You
+/* IMPORTANT: Give a high level description of your code here. You
  * must also provide a header comment at the beginning of each
  * function that describes what that function does.
  */ 
