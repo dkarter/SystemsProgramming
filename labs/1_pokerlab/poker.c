@@ -37,6 +37,74 @@ void hand_to_string (hand_t hand, char *handstr) {
  * given array of cards is populated with the card values.
  */
 void string_to_hand (const char *handstr, hand_t hand) {
+    const char *p = handstr;
+    int i;
+    int handValue;
+    for (i=0; i<5; i++) {
+	/*
+	//handle value
+        switch (p) {
+            case 'T':
+           	hand[i].value = 10;
+		break;
+	    case 'J':
+		hand[i].value = 11;
+		break;
+            case 'Q':
+		hand[i].value = 12;
+		break;
+            case 'K':
+		hand[i].value = 13;
+		break;
+            case 'A':
+		hand[i].value = 14;
+		break;
+            default:
+            	//convert to int and set value to result
+            	handValue = atoi(p);
+                hand[i].value = handValue;
+		break;
+	}
+	*/
+
+	if (*p == 'T') {
+	    hand[i].value = 10;
+	} else if (*p == 'J') {
+	    hand[i].value = 11;
+	} else if (*p == 'Q') {
+	    hand[i].value = 12;
+	} else if (*p == 'K') {
+	    hand[i].value = 13;
+ 	} else if (*p == 'A') {
+	    hand[i].value = 14;
+	} else {
+            handValue = atoi(p);
+            hand[i].value = handValue;
+	}
+
+
+	//handle suit
+	switch (*p++) {
+	    case 'D':
+		hand[i].suit = DIAMOND;
+		break;
+	    case 'C':
+		hand[i].suit = CLUB;
+		break;
+	    case 'H':
+		hand[i].suit = HEART;
+		break;
+	    case 'S':
+		hand[i].suit = SPADE;
+		break;
+	}
+
+        //advance string pointer to next
+        //card representation
+	p+=2;
+     }
+		
+
 }
 
 /* sorts the hands so that the cards are in ascending order of value (two
