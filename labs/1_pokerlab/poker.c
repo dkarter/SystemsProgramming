@@ -41,32 +41,9 @@ void string_to_hand (const char *handstr, hand_t hand) {
     int i;
     int handValue;
     for (i=0; i<5; i++) {
-	/*
-	//handle value
-        switch (p) {
-            case 'T':
-           	hand[i].value = 10;
-		break;
-	    case 'J':
-		hand[i].value = 11;
-		break;
-            case 'Q':
-		hand[i].value = 12;
-		break;
-            case 'K':
-		hand[i].value = 13;
-		break;
-            case 'A':
-		hand[i].value = 14;
-		break;
-            default:
-            	//convert to int and set value to result
-            	handValue = atoi(p);
-                hand[i].value = handValue;
-		break;
-	}
-	*/
 
+	//handle Char representation
+	//of valued bigger than 10
 	if (*p == 'T') {
 	    hand[i].value = 10;
 	} else if (*p == 'J') {
@@ -81,10 +58,10 @@ void string_to_hand (const char *handstr, hand_t hand) {
             handValue = atoi(p);
             hand[i].value = handValue;
 	}
-
+	
 
 	//handle suit
-	switch (*p++) {
+	switch (*++p) {
 	    case 'D':
 		hand[i].suit = DIAMOND;
 		break;
@@ -110,6 +87,31 @@ void string_to_hand (const char *handstr, hand_t hand) {
 /* sorts the hands so that the cards are in ascending order of value (two
  * lowest, ace highest */
 void sort_hand (hand_t hand) {
+  //simple selection sort 
+  int iPos;
+  int iMin;
+  int i;
+  
+  for (iPos = 0; iPos < 5; iPos++) {
+    //assume iMin is the first element
+    iMin = iPos;
+    
+    for (i = iPos+1; i < 5; i++) {
+      if (hand[i].value < hand[iMin].value) {
+	//found new minimum - remember it's index
+	iMin = i;
+      }
+    }
+    
+    //iMin is the index of the minimum element, swap it with curr pos
+    swap_hands(hand, iPos, iMin);
+  }
+}
+
+void swap_hands (hand_t * array, int firstIndex, int secondIndex) {
+  hand_t tmp = array[firstIndex];
+  array[firstIndex] = array[secondIndex];
+  array[secondIndex] = tmp;
 }
 
 int count_pairs (hand_t hand) {
@@ -164,5 +166,16 @@ int compare_hands (hand_t h1, hand_t h2) {
  * the highcards are a draw, compare the next set of highcards, and so forth.
  */
 int compare_highcards (hand_t h1, hand_t h2) {
-    return 0;
+  // sort both hands first
+  sort_hand(h1);
+  sort_hand(h2);
+
+  //iterate and compare
+  int i;
+  for (i = 0; i<5; i++) {
+    if (h1[i].value > h2[i].value) return 0;
+    if (h2[i].value > h1[i].value) return 1;
+  }
+  
+
 }
