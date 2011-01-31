@@ -291,9 +291,9 @@ int compare_highcards (hand_t h1, hand_t h2) {
 
   //iterate and compare
   int i;
-  for (i = 0; i<5; i++) {
+  for (i = 4; i>=0; i--) {
     if (h1[i].value > h2[i].value) return 0;
-    if (h2[i].value > h1[i].value) return 1;
+    if (h1[i].value < h2[i].value) return 1;
   }
   
 
