@@ -1,18 +1,5 @@
 typedef enum { DIAMOND, CLUB, HEART, SPADE } suit_t;
 
-typedef enum {
-  HighCard,
-  OnePair,
-  TwoPairs,
-  ThreeOfAKind,
-  Straight,
-  Flush,
-  FullHouse,
-  FourOfAKind,
-  StraightFlush,
-  RoyalFlush
-} ranks;
-
 typedef struct {
     int value; /* 2-10 for number cards, 10-13 for face cards, 14 for ace */
     suit_t suit;
@@ -26,9 +13,6 @@ void string_to_hand (const char *, hand_t);
 
 /* misc. utility functions */
 void sort_hand (hand_t);
-
-// swap the hand objects
-void swap_hands (hand_t *, int, int);
 
 /* hand type predicates -- note that these aren't necessarily mutually
  * exclusive! (e.g., a fullhouse is also a threeofakind and a onepair) */

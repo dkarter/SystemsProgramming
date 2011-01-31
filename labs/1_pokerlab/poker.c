@@ -108,10 +108,10 @@ void sort_hand (hand_t hand) {
   }
 }
 
-void swap_hands (hand_t * array, int firstIndex, int secondIndex) {
-  hand_t tmp = array[firstIndex];
-  array[firstIndex] = array[secondIndex];
-  array[secondIndex] = tmp;
+void swap_hands (hand_t *hand, int firstIndex, int secondIndex) {
+  hand_t tmp = hand[firstIndex];
+  hand[firstIndex] = hand[secondIndex];
+  hand[secondIndex] = tmp;
 }
 
 
