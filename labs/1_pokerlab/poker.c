@@ -104,12 +104,12 @@ void sort_hand (hand_t hand) {
     }
     
     //iMin is the index of the minimum element, swap it with curr pos
-    swap_hands(hand, iPos, iMin);
+    swap_cards(hand, iPos, iMin);
   }
 }
 
-void swap_hands (hand_t *hand, int firstIndex, int secondIndex) {
-  hand_t tmp = hand[firstIndex];
+void swap_cards (hand_t hand, int firstIndex, int secondIndex) {
+  card_t tmp = hand[firstIndex];
   hand[firstIndex] = hand[secondIndex];
   hand[secondIndex] = tmp;
 }

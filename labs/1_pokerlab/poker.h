@@ -14,6 +14,8 @@ void string_to_hand (const char *, hand_t);
 /* misc. utility functions */
 void sort_hand (hand_t);
 
+void swap_cards (hand_t, int, int);
+
 /* hand type predicates -- note that these aren't necessarily mutually
  * exclusive! (e.g., a fullhouse is also a threeofakind and a onepair) */
 int is_onepair       (hand_t);
