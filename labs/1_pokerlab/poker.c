@@ -278,9 +278,35 @@ int is_royalflush (hand_t hand) {
  * returns 0 if h1 > h2, 1 if h2 > h1.
  */
 int compare_hands (hand_t h1, hand_t h2) {
+  int hand1_rank = get_rank(h1);
+  int hand2_rank = get_rank(h2);
+  
+  if (hand2_rank== hand1_rank)
     return compare_highcards(h1, h2);
+
+    return (hand2_rank > hand1_rank);
 }
 
+int get_rank (hand_t hand, hand_t against) {
+  if (is_royalflush(hand))
+    return 10;
+  if (is_straightflush(hand))
+    return 9;
+  if (is_fourofakind(hand))
+    return 8;
+  if (is_fullhouse(hand))
+    return 7;
+  if (is_flush(hand))
+    return 6;
+  if (is_straight(hand))
+    return 5;
+  if (is_threeofakind(hand))
+    return 4;
+  if (is_twopairs(hand))
+    return 3;
+  if (is_onepair(hand))
+    return 2;
+}
 /* compares the hands based solely on their highcard values (ignoring rank). if
  * the highcards are a draw, compare the next set of highcards, and so forth.
  */
