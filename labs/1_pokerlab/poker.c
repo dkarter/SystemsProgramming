@@ -114,24 +114,73 @@ void swap_hands (hand_t * array, int firstIndex, int secondIndex) {
   array[secondIndex] = tmp;
 }
 
-int count_pairs (hand_t hand) {
-    return 0;
+
+//return occurrences of a specific
+//card value in a hand
+int count_occur (int value, hand_t hand) {
+  int occurrences = 0;
+  int i;
+  for (i=0; i<5; i++)
+    if (value == hand[i].value)
+      occurrences++;
+
+  return occurrences;
 }
 
 int is_onepair (hand_t hand) {
-    return 0;
+  int i;
+  for (i=0; i<5; i++)
+    if (count_occur(hand[i].value, hand) >= 2)
+      //we found a pair
+      return 1;
+  return 0;
 }
 
 int is_twopairs (hand_t hand) {
-    return 0;
+  int pair_value = 0;
+  int i;
+
+  for (i=0; i<5; i++) {
+    //if it's more than a pair then ignore it
+    //(it's not two unique pairs)
+    if (count_occur(hand[i].value,hand) != 2)
+      continue;
+    
+    //check if we didn't record it yet
+    if (pair_value == 0)
+      //record the first pair
+      pair_value = hand[i].value;
+    else
+      //this is our second pair - bingo!
+      if (pair_value != hand[i].value)
+	return 1;
+  }
+
+  return 0;
 }
 
 int is_threeofakind (hand_t hand) {
-    return 0;
+  int i;
+  for (i=0; i<5; i++)
+    if (count_occur(hand[i].value, hand) >= 3)
+      // we found at least three occurrences
+      //of a same valued card
+      return 1;
+
+  return 0;
 }
 
 int is_straight (hand_t hand) {
-    return 0;
+  //we have to sort the cards for this one
+  sort_hand(hand);
+  int i;
+  for (i = 0; i<=3; i++)
+    //make sure values are consequtive
+    if (hand[i].value != (hand[i+1].value - 1))
+      return 0;
+
+  //all values were consequtive
+  return 1;
 }
 
 int is_fullhouse (hand_t hand) {
@@ -143,15 +192,59 @@ int is_flush (hand_t hand) {
 }
 
 int is_straightflush (hand_t hand) {
-    return 0;
+  //we have to sort the cards for this one
+  sort_hand(hand);
+
+  int i;
+  for (i = 0; i<=3; i++)
+    //make sure values are consequtive
+    //and all cards are of same suit
+    if (hand[i].value != (hand[i+1].value - 1) ||
+	hand[i].suit != hand[i+1].suit)
+      return 0;
+
+  //all values were consequtive
+  return 1;
 }
 
 int is_fourofakind (hand_t hand) {
-    return 0;
+  int i;
+  for (i=0; i<5; i++)
+    if (count_occur(hand[i].value, hand) == 4)
+      // we found at least four occurrences
+      //of a same valued card
+      return 1;
+
+  return 0;
 }
 
 int is_royalflush (hand_t hand) {
-    return 0;
+  //first we figure out the suit to check against  
+  suit_t expected_suit = hand[0].suit;
+  
+  // a royal flush always starts with a 10
+  int expected_value=10;
+  
+  //for loop
+  int i;
+
+  // then we sort the hand to make
+  // it easier to check for consequtivity
+  sort_hand(hand);
+  
+  for (i=0; i<5; i++) {
+    //check that each card obeys the rules of a royal flush
+    if (hand[i].value != expected_value ||
+	hand[i].suit != expected_suit)
+      return 0;
+    
+    //increase expected value with ea iteration
+    expected_value++;
+  }
+  
+  // all cards followed the rules
+  return 1;
+
 }
 
 /* compares the hands based on rank -- if the ranks (and rank values) are

@@ -1,5 +1,18 @@
 typedef enum { DIAMOND, CLUB, HEART, SPADE } suit_t;
 
+typedef enum {
+  HighCard,
+  OnePair,
+  TwoPairs,
+  ThreeOfAKind,
+  Straight,
+  Flush,
+  FullHouse,
+  FourOfAKind,
+  StraightFlush,
+  RoyalFlush
+} ranks;
+
 typedef struct {
     int value; /* 2-10 for number cards, 10-13 for face cards, 14 for ace */
     suit_t suit;
