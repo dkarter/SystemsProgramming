@@ -184,11 +184,38 @@ int is_straight (hand_t hand) {
 }
 
 int is_fullhouse (hand_t hand) {
-    return 0;
+  int i;
+  int has_pair = 0;
+  int has_three = 0;
+  int occurrences = 0;
+
+  for (i=0; i<5; i++) {
+    occurrences = count_occur(hand[i].value, hand);
+    if (occurrences == 2)
+      has_pair = 1;
+    else if (occurrences == 3)
+      has_three = 1;
+  }
+  
+  //predicate returns true if has a pair and three of a kind
+  return (has_pair && has_three);
 }
 
 int is_flush (hand_t hand) {
-    return 0;
+  //first we figure out the suit to check against  
+  suit_t expected_suit = hand[0].suit;
+
+  //for loop
+  int i;
+  
+  for (i=0; i<5; i++)
+    //check all cards have same suit
+    if (hand[i].suit != expected_suit)
+      return 0;
+  
+  // all cards followed the rules
+  return 1;
+
 }
 
 int is_straightflush (hand_t hand) {
@@ -244,7 +271,6 @@ int is_royalflush (hand_t hand) {
   
   // all cards followed the rules
   return 1;
-
 }
 
 /* compares the hands based on rank -- if the ranks (and rank values) are
