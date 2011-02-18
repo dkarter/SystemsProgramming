@@ -11,49 +11,58 @@ int main (int argc, char *argv[]) {
 	 *
 	 * Delete this code and add your own!
 	 */
-	vertex_t *v1, *v2, *v3, *vlist_head, *vp;
-	adj_vertex_t *adj_v;
+	/*vertex_t *v1, *v2, *v3, *vlist_head;
+	adj_vertex_t *adj_v;*/
 
-	vlist_head = v1 = malloc(sizeof(vertex_t));
-	v1->name = "A";
-	v2 = malloc(sizeof(vertex_t));
-	v2->name = "B";
-	v3 = malloc(sizeof(vertex_t));
-	v3->name = "C";
+        vertex_t *vlist_head = NULL;
+        add_edge(&vlist_head, "A", "B", 10);
+        add_edge(&vlist_head, "B", "C", 5);
+        
 
-	v1->next = v2;
-	v2->next = v3;
-	v3->next = NULL;
+        tour_info_t *tour = find_tour(vlist_head);
 
-	adj_v = v1->adj_list = malloc(sizeof(adj_vertex_t));
-	adj_v->vertex = v2;
-	adj_v->edge_weight = 10;
-	adj_v->next = NULL;
+        print_out(vlist_head);
 
-	adj_v = v2->adj_list = malloc(sizeof(adj_vertex_t));
-	adj_v->vertex = v1;
-	adj_v->edge_weight = 10;
-	adj_v = adj_v->next = malloc(sizeof(adj_vertex_t));
-	adj_v->vertex = v3;
-	adj_v->edge_weight = 5;
-	adj_v->next = NULL;
+        printf("Tour:\n");
+        print_out(tour->path);
 
-	adj_v = v3->adj_list = malloc(sizeof(adj_vertex_t));
-	adj_v->vertex = v2;
-	adj_v->edge_weight = 5;
-	adj_v->next = NULL;
+        printf("Total Distance: %d\n", tour->total_distance);
 
-	/* print out our adjacency list */
-	printf("Adjacency list:\n");
-	for (vp = vlist_head; vp != NULL; vp = vp->next) {
-		printf("  %s: ", vp->name);
-		for (adj_v = vp->adj_list; adj_v != NULL; adj_v = adj_v->next) {
-			printf("%s(%d) ", adj_v->vertex->name, adj_v->edge_weight);
-		}
-		printf("\n");
-	}
+        freemem(&vlist_head);
 
-	/* note, I'm not free-ing here, but you should! */
+        print_out(vlist_head);
 
-	return 0;
+        return 0;
+
+
+        /*
+        //graph size test
+        printf("graph size (expected 3): %d\n", graph_size(vlist_head));
+        printf("graph size - NULL (expected 0): %d\n", graph_size(NULL));
+        
+        //graph last test
+        vertex_t **a = graph_last(&vlist_head);
+        printf("graph last (expected C): %s\n", (*a)->name);
+        vertex_t *null_list = NULL;
+        a = graph_last(&null_list);
+        printf("graph last - NULL list head pointer (expected OK): %s\n", ((*a)==null_list? "OK" : "Error"));
+        null_list = malloc(sizeof(vertex_t));
+        a = graph_last(&null_list);
+        printf("graph last - malloc'd  (expected OK): %s\n", ((*a)==null_list? "OK" : "Error"));
+
+        //graph_contains
+        char *B = "B";
+        vertex_t *b = graph_contains(vlist_head, B);
+        printf("graph contains B (expected Yes): %s\n", ((b->name == B)? "Yes" : "No"));
+        b = graph_contains(vlist_head, "D");
+        printf("graph contains D (expected No): %s\n", ((b == NULL)? "No" : "Yes"));
+        b = graph_contains(NULL, B);
+        printf("graph contains B - empty graph (expected NULL): %s\n", ((b == NULL)? "NULL" : "Error"));
+
+
+        //add edge
+        */
+
+        //dealloc all
+        
 }
