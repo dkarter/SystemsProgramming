@@ -54,9 +54,9 @@ struct tour_info {
 void freemem(vertex_t **target);
 
  adj_vertex_t **adjlist_last(adj_vertex_t **head);
- vertex_t *subtract_list(adj_vertex_t *first, vertex_t *second);
+ vertex_t *subtract_list(vertex_t *first, vertex_t *second);
 
  adj_vertex_t *adjlist_contains (adj_vertex_t *head, char *name);
  tour_info_t *find_tour(vertex_t *head);
- tour_info_t *tour_recursive(vertex_t *vtxlist, adj_vertex_t *head, int max_graph_size, tour_info_t *info);
+ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t *path);
  int find_weight(vertex_t *head, char *v1_name, char* v2_name);

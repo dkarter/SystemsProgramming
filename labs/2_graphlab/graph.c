@@ -114,13 +114,20 @@ void adj_insert(vertex_t *parent, vertex_t *child, int weight) {
 
 // needs to dealloc after use
 tour_info_t *find_tour(vertex_t *head) {
-    tour_info_t *tmp = malloc(sizeof(tour_info_t));\
-    tour_info_t *result = tour_recursive(head, head->adj_list, graph_size(head), tmp);
-    //free mem
-    tmp = NULL;
+  vertex_t *path = NULL;
+  tour_info_t *result = malloc(sizeof(tour_info_t));
+    
+  tour_recursive(head, graph_size(head), path);
+  
+  if (path != NULL) {
+    result->path = path;
+    result->total_distance = -1;
+  } else {
+    result = NULL;
+  }
 
-    //return result (need to free mem afterwards as well)
-    return result;
+  //return result (need to free mem afterwards as well)
+  return result;
 }
 
 /*
@@ -129,39 +136,41 @@ tour_info_t *find_tour(vertex_t *head) {
    in the order they're traversed, and the second element is the distance
    of the tour. The tour returned isn't necessarily the shortest one.
  */
- tour_info_t *tour_recursive(vertex_t *vtxlist, adj_vertex_t *head, int max_graph_size, tour_info_t *info) {
-    //check if done
-    if(graph_size(info->path) == max_graph_size)
-        return info;
+ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t *path) {
+     
+   if (head != NULL && graph_contains(path, head->name) != NULL)
+        //track the path we've toured
+     vtx_insert(&path, head->name);
+   else
+     //head is empty so we can't really do anything
+     return 0;
 
-    vertex_t *subtraction = subtract_list(head, info->path);
 
-    //already traversed
-    if (head == NULL || subtraction == NULL) {
-        //freemem(&subtraction);
-        return NULL;
+    //check if done touring
+    if(graph_size(path) == max_graph_size)
+        return 1;
+
+    vertex_t *subtraction = subtract_list(head, path);
+
+    //already toured
+    if (subtraction == NULL) {
+        return 0;
     }
         
 
-    vertex_t *cursor;
-    tour_info_t *result;
-    int weight;
+    adj_vertex_t *cursor;
+    int a;
 
-    for (cursor = subtraction; cursor != NULL; cursor = cursor->next) {
-        //track the path we've traversed
-        vtx_insert(&(info->path), cursor->name);
-
-        //add up distance
-        weight = find_weight(vtxlist, head->vertex->name, cursor->name);
-        info->total_distance = (info->total_distance + weight);
+    for (cursor = subtraction->adj_list; cursor != NULL; cursor = cursor->next) {
+        
 
         //check if we got a result and return it
-        result = tour_recursive(vtxlist, cursor->adj_list, max_graph_size, info);
-            
+        if ((a = tour_recursive(cursor->vertex, max_graph_size, path)) == 1)
+            return 1;
+
     }
 
-    //freemem(&subtraction);
-    return info;
+    return 0;
 }
 
 
@@ -172,14 +181,14 @@ tour_info_t *find_tour(vertex_t *head) {
  }
 
  //returns every item in the first list that's not in the second
- vertex_t *subtract_list(adj_vertex_t *first, vertex_t *second) {
+ vertex_t *subtract_list(vertex_t *first, vertex_t *second) {
      vertex_t *newlist = NULL;
-     adj_vertex_t *cursor;
+     vertex_t *cursor;
      for (cursor = first; cursor != NULL; cursor = cursor->next) {
-         if (graph_contains(second, cursor->vertex->name) == NULL)
-             vtx_insert_obj(&newlist, cursor->vertex);
-
+         if (graph_contains(second, cursor->name) == NULL)
+             vtx_insert_obj(&newlist, cursor);
      }
+     
      return newlist;
  }
 
