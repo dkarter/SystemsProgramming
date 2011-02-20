@@ -58,5 +58,5 @@ void freemem(vertex_t **target);
 
  adj_vertex_t *adjlist_contains (adj_vertex_t *head, char *name);
  tour_info_t *find_tour(vertex_t *head);
- int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path);
+ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist);
  int find_weight(vertex_t *head, char *v1_name, char* v2_name);

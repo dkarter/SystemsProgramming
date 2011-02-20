@@ -3,35 +3,44 @@
 #include "graph.h"
 
 int main (int argc, char *argv[]) {
-	/* 
+  vertex_t *vlist_head = NULL;	
+  /* 
 	 * Programatically constructing the following simple graph:
 	 *
 	 *     10         5
 	 * A <-----> B <-----> C
 	 *
 	 * Delete this code and add your own!
-	 */
-	/*vertex_t *v1, *v2, *v3, *vlist_head;
-	adj_vertex_t *adj_v;*/
+	 *
+	vertex_t *v1, *v2, *v3, *vlist_head;
+	adj_vertex_t *adj_v;
 
-        vertex_t *vlist_head = NULL;
+        
         add_edge(&vlist_head, "A", "B", 10);
         add_edge(&vlist_head, "B", "C", 5);
-        
+        */
+  int i;
+  //parse command line into graph
+  for (i = 1; i<argc; i=i+3) {
+    add_edge(&vlist_head, argv[i], argv[i+1], atoi(argv[i+2]));
+  }
 
+  
         tour_info_t *tour = find_tour(vlist_head);
 
         print_out(vlist_head);
 
-        printf("Tour:\n");
+        printf("Tour Path:\n");
         print_out(tour->path);
 
         printf("Total Distance: %d\n", tour->total_distance);
 
         freemem(&vlist_head);
-
+	freemem(&(tour->path));
         print_out(vlist_head);
-
+	print_out(tour->path);
+	vlist_head = NULL;
+	tour = NULL;
         return 0;
 
 

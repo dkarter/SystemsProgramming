@@ -116,12 +116,11 @@ void adj_insert(vertex_t *parent, vertex_t *child, int weight) {
 tour_info_t *find_tour(vertex_t *head) {
   vertex_t *path = NULL;
   tour_info_t *result = malloc(sizeof(tour_info_t));
-    
-  tour_recursive(head, graph_size(head), &path);
+  
+  result->total_distance = tour_recursive(head, graph_size(head), &path, 0);
   
   if (path != NULL) {
     result->path = path;
-    result->total_distance = -1;
   } else {
     result = NULL;
   }
@@ -136,7 +135,7 @@ tour_info_t *find_tour(vertex_t *head) {
    in the order they're traversed, and the second element is the distance
    of the tour. The tour returned isn't necessarily the shortest one.
  */
-int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path) {
+int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist) {
      
    if (head != NULL && graph_contains(*path, head->name) == NULL)
       //track the path we've toured
@@ -148,7 +147,7 @@ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path) {
 
     //check if done touring
     if(graph_size(*path) == max_graph_size)
-        return 1;
+        return dist;
 
     vertex_t *subtraction = subtract_list(head, *path);
 
@@ -160,11 +159,13 @@ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path) {
 
     adj_vertex_t *cursor;
     int a;
+    int d;
 
     for (cursor = head->adj_list; cursor != NULL; cursor = cursor->next) {
-        //check if we got a result and return it
-        if ((a = tour_recursive(cursor->vertex, max_graph_size, path)) == 1)
-            return 1;
+      //call recursive touring on each adj vertex (also add up distance)
+      d = dist+cursor->edge_weight;
+      if ((a = tour_recursive(cursor->vertex, max_graph_size, path, d)))
+	return a;
     }
 
     return 0;
