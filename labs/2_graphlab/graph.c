@@ -117,7 +117,7 @@ tour_info_t *find_tour(vertex_t *head) {
   vertex_t *path = NULL;
   tour_info_t *result = malloc(sizeof(tour_info_t));
     
-  tour_recursive(head, graph_size(head), path);
+  tour_recursive(head, graph_size(head), &path);
   
   if (path != NULL) {
     result->path = path;
@@ -136,21 +136,21 @@ tour_info_t *find_tour(vertex_t *head) {
    in the order they're traversed, and the second element is the distance
    of the tour. The tour returned isn't necessarily the shortest one.
  */
- int tour_recursive(vertex_t *head, int max_graph_size, vertex_t *path) {
+ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path) {
      
-   if (head != NULL && graph_contains(path, head->name) != NULL)
+   if (head != NULL && graph_contains(*path, head->name) == NULL)
         //track the path we've toured
-     vtx_insert(&path, head->name);
+     vtx_insert(path, head->name);
    else
      //head is empty so we can't really do anything
      return 0;
 
 
     //check if done touring
-    if(graph_size(path) == max_graph_size)
+    if(graph_size(*path) == max_graph_size)
         return 1;
 
-    vertex_t *subtraction = subtract_list(head, path);
+    vertex_t *subtraction = subtract_list(head, *path);
 
     //already toured
     if (subtraction == NULL) {
