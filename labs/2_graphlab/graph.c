@@ -25,7 +25,7 @@ adj_vertex_t *adjlist_contains (adj_vertex_t *head, char *name) {
     adj_vertex_t *cursor;
 
     for (cursor = head; cursor != NULL; cursor = cursor->next) {
-        if (cursor->vertex != NULL && cursor->vertex->name == name)
+      if (cursor->vertex != NULL && !strcmp(cursor->vertex->name, name))
             return cursor;
     }
 
@@ -62,7 +62,7 @@ vertex_t *graph_contains (vertex_t *vtxhead, char *name) {
     vertex_t *cursor;
 
     for (cursor = vtxhead; cursor != NULL; cursor = cursor->next) {
-        if (cursor->name == name)
+      if (!strcmp(cursor->name,name))
             return cursor;
     }
 
