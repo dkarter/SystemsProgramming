@@ -19,9 +19,8 @@ int main (int argc, char *argv[]) {
   freemem(&vlist_head);
   freemem(&(tour->path));
 
-  vlist_head = NULL;
-  tour = NULL;
-  
+  free(tour);
+
   return 0;
         
 }

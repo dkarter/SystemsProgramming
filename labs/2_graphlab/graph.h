@@ -43,7 +43,6 @@ void print_out (vertex_t *head, vertex_t *tour_path, int distance);
  vertex_t *graph_contains (vertex_t *vtxhead, char *name);
 
  vertex_t *vtx_insert(vertex_t **head, char *name);
- vertex_t *vtx_insert_obj(vertex_t **head, vertex_t *child);
  void adj_insert(vertex_t *parent, vertex_t *child, int weight);
 
  int graph_size(vertex_t *head);
@@ -54,9 +53,8 @@ void print_out (vertex_t *head, vertex_t *tour_path, int distance);
 void freemem(vertex_t **target);
 
  adj_vertex_t **adjlist_last(adj_vertex_t **head);
- vertex_t *subtract_list(vertex_t *first, vertex_t *second);
-
+ 
  adj_vertex_t *adjlist_contains (adj_vertex_t *head, char *name);
  tour_info_t *find_tour(vertex_t *head);
  int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist);
- int find_weight(vertex_t *head, char *v1_name, char* v2_name);
+ 

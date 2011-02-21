@@ -56,7 +56,7 @@ vertex_t **graph_last(vertex_t **vtxhead) {
 
 //searches for a vertex in a list and returns it or null in !exists
 vertex_t *graph_contains (vertex_t *vtxhead, char *name) {
-    vertex_t *cursor;
+    vertex_t *cursor = NULL;
 
     for (cursor = vtxhead; cursor != NULL; cursor = cursor->next) {
       if (!strcmp(cursor->name,name))
@@ -79,21 +79,18 @@ vertex_t *vtx_insert(vertex_t **head, char *name) {
     vertex_t **last = graph_last(head);
 
     *last = malloc(sizeof(vertex_t));
+    (*last)->next = NULL;
     (*last)->name = name;
 
     //return newly created item
     return *last;
 }
 
-vertex_t *vtx_insert_obj(vertex_t **head, vertex_t *child) {
-    vertex_t *vtx = vtx_insert(head, child->name);
-    vtx->adj_list = child->adj_list;
-    return vtx;
-}
+
 
 //inserts an item into adj list if doesn't exist already
 void adj_insert(vertex_t *parent, vertex_t *child, int weight) {
-    adj_vertex_t *adj_exists;
+    adj_vertex_t *adj_exists = NULL;
     adj_vertex_t **last_adj;
 
     //parent has the child in adjancy list
@@ -102,10 +99,14 @@ void adj_insert(vertex_t *parent, vertex_t *child, int weight) {
     if (adj_exists == NULL) {
         last_adj = adjlist_last(&(parent->adj_list));
         *last_adj = malloc(sizeof(adj_vertex_t));
-
+       
         //set properties
         (*last_adj)->edge_weight = weight;
         (*last_adj)->vertex = child;
+	(*last_adj)->next = NULL;
+	
+	last_adj = NULL;
+	free(last_adj);
     }
 }
 
@@ -145,17 +146,7 @@ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist
     //check if done touring
     if(graph_size(*path) == max_graph_size)
         return dist;
-
-    vertex_t *subtraction = subtract_list(head, *path);
-
-    //already toured
-    if (subtraction == NULL) {
-      subtraction = NULL; 
-      return 0;
-    }
     
-    //free mem
-    subtraction = NULL;
 
     adj_vertex_t *cursor;
     int a;
@@ -172,23 +163,6 @@ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist
 }
 
 
- int find_weight(vertex_t *head, char *v1_name, char* v2_name) {
-   vertex_t *first = graph_contains(head, v1_name);
-   adj_vertex_t *second = adjlist_contains(first->adj_list, v2_name);
-   return second->edge_weight;
- }
-
- //returns every item in the first list that's not in the second
- vertex_t *subtract_list(vertex_t *first, vertex_t *second) {
-     vertex_t *newlist = NULL;
-     vertex_t *cursor;
-     for (cursor = first; cursor != NULL; cursor = cursor->next) {
-         if (graph_contains(second, cursor->name) == NULL)
-             vtx_insert_obj(&newlist, cursor);
-     }
-     
-     return newlist;
- }
 
 //gets the size of a vertex linked list
 int graph_size(vertex_t *head) {
@@ -202,17 +176,6 @@ int graph_size(vertex_t *head) {
     return size;
 }
 
-//gets the size of a vertex linked list
-int adjlist_size(adj_vertex_t *head) {
-
-    int size = 0;
-    adj_vertex_t *cursor;
-
-    for (cursor = head; cursor != NULL; cursor = cursor->next)
-        size++;
-
-    return size;
-}
 
 //prints the graph using iteration
 void print_out (vertex_t *head, vertex_t *tour_path, int distance) {
@@ -257,25 +220,18 @@ void print_out (vertex_t *head, vertex_t *tour_path, int distance) {
 void free_adj(adj_vertex_t *target) {
     if (target != NULL) {
         free_adj(target->next);
-        target->edge_weight = 0;
-        target->vertex = NULL;
-        target->next = NULL;
-        target = NULL;
+        free(target);
     }
 }
 
 void free_vtx(vertex_t *target) {
     if (target != NULL) {
-        free_vtx(target->next);
-        target->name = NULL;
-        free_adj(target->adj_list);
-        target->adj_list = NULL;
-        target->next = NULL;
-        target = NULL;
+      free_vtx(target->next);
+      free_adj(target->adj_list);
+      free(target);
     }
 }
 
 void freemem(vertex_t **target) {
     free_vtx(*target);
-    target = NULL;
 }
