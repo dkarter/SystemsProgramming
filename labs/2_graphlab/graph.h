@@ -36,7 +36,7 @@ struct tour_info {
  */
  void add_edge (vertex_t **vtxhead, char *v1_name, char *v2_name, int weight);
 
- void print_out (vertex_t *head);
+void print_out (vertex_t *head, vertex_t *tour_path, int distance);
 
  vertex_t **graph_last (vertex_t **vtxhead);
 

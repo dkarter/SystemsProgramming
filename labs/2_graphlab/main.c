@@ -3,75 +3,25 @@
 #include "graph.h"
 
 int main (int argc, char *argv[]) {
-  vertex_t *vlist_head = NULL;	
-  /* 
-	 * Programatically constructing the following simple graph:
-	 *
-	 *     10         5
-	 * A <-----> B <-----> C
-	 *
-	 * Delete this code and add your own!
-	 *
-	vertex_t *v1, *v2, *v3, *vlist_head;
-	adj_vertex_t *adj_v;
-
-        
-        add_edge(&vlist_head, "A", "B", 10);
-        add_edge(&vlist_head, "B", "C", 5);
-        */
+  vertex_t *vlist_head = NULL; 
+ 
   int i;
-  //parse command line into graph
-  for (i = 1; i<argc; i=i+3) {
+  //parse command line into a graph object
+  for (i = 1; i<argc; i=i+3)
     add_edge(&vlist_head, argv[i], argv[i+1], atoi(argv[i+2]));
-  }
+  
 
   
-        tour_info_t *tour = find_tour(vlist_head);
+  tour_info_t *tour = find_tour(vlist_head);
 
-        print_out(vlist_head);
+  print_out(vlist_head, tour->path, tour->total_distance);
 
-        printf("Tour Path:\n");
-        print_out(tour->path);
+  freemem(&vlist_head);
+  freemem(&(tour->path));
 
-        printf("Total Distance: %d\n", tour->total_distance);
-
-        freemem(&vlist_head);
-	freemem(&(tour->path));
-        print_out(vlist_head);
-	print_out(tour->path);
-	vlist_head = NULL;
-	tour = NULL;
-        return 0;
-
-
-        /*
-        //graph size test
-        printf("graph size (expected 3): %d\n", graph_size(vlist_head));
-        printf("graph size - NULL (expected 0): %d\n", graph_size(NULL));
-        
-        //graph last test
-        vertex_t **a = graph_last(&vlist_head);
-        printf("graph last (expected C): %s\n", (*a)->name);
-        vertex_t *null_list = NULL;
-        a = graph_last(&null_list);
-        printf("graph last - NULL list head pointer (expected OK): %s\n", ((*a)==null_list? "OK" : "Error"));
-        null_list = malloc(sizeof(vertex_t));
-        a = graph_last(&null_list);
-        printf("graph last - malloc'd  (expected OK): %s\n", ((*a)==null_list? "OK" : "Error"));
-
-        //graph_contains
-        char *B = "B";
-        vertex_t *b = graph_contains(vlist_head, B);
-        printf("graph contains B (expected Yes): %s\n", ((b->name == B)? "Yes" : "No"));
-        b = graph_contains(vlist_head, "D");
-        printf("graph contains D (expected No): %s\n", ((b == NULL)? "No" : "Yes"));
-        b = graph_contains(NULL, B);
-        printf("graph contains B - empty graph (expected NULL): %s\n", ((b == NULL)? "NULL" : "Error"));
-
-
-        //add edge
-        */
-
-        //dealloc all
+  vlist_head = NULL;
+  tour = NULL;
+  
+  return 0;
         
 }

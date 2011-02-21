@@ -7,7 +7,6 @@
 
 
 void add_edge (vertex_t **vtxhead, char *v1_name, char *v2_name, int weight) {
-
     //if head pointer points to nothing then we allocate a new graph
     if (vtxhead == NULL)
         vtxhead = malloc(sizeof(vertex_t));
@@ -17,8 +16,6 @@ void add_edge (vertex_t **vtxhead, char *v1_name, char *v2_name, int weight) {
     
     adj_insert(parent, child, weight);
     adj_insert(child, parent, weight);
-
-    
 }
 
 adj_vertex_t *adjlist_contains (adj_vertex_t *head, char *name) {
@@ -134,7 +131,7 @@ tour_info_t *find_tour(vertex_t *head) {
    return a vector where the first element is a seq of the vertices
    in the order they're traversed, and the second element is the distance
    of the tour. The tour returned isn't necessarily the shortest one.
- */
+*/
 int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist) {
      
    if (head != NULL && graph_contains(*path, head->name) == NULL)
@@ -173,9 +170,9 @@ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist
 
 
  int find_weight(vertex_t *head, char *v1_name, char* v2_name) {
-     vertex_t *first = graph_contains(head, v1_name);
-     adj_vertex_t *second = adjlist_contains(first->adj_list, v2_name);
-     return second->edge_weight;
+   vertex_t *first = graph_contains(head, v1_name);
+   adj_vertex_t *second = adjlist_contains(first->adj_list, v2_name);
+   return second->edge_weight;
  }
 
  //returns every item in the first list that's not in the second
@@ -215,25 +212,43 @@ int adjlist_size(adj_vertex_t *head) {
 }
 
 //prints the graph using iteration
-void print_out (vertex_t *head) {
-	/* print out our adjacency list */
-	printf("Adjacency list:\n");
+void print_out (vertex_t *head, vertex_t *tour_path, int distance) {
+  /* print out our adjacency list */
+  printf("Adjacency list:\n");
 
-        if (head == NULL) {
-            printf("Empty.\n");
-            return;
-        }
+  if (head == NULL) {
+    printf("Empty.\n");
+    return;
+  }
 
-        vertex_t *vp;
-        adj_vertex_t *adj_v;
+  vertex_t *vp;
+  adj_vertex_t *adj_v;
 
-	for (vp = head; vp != NULL; vp = vp->next) {
-		printf("  %s: ", vp->name);
-		for (adj_v = vp->adj_list; adj_v != NULL; adj_v = adj_v->next) {
-			printf("%s(%d) ", adj_v->vertex->name, adj_v->edge_weight);
-		}
-		printf("\n");
-	}
+  for (vp = head; vp != NULL; vp = vp->next) {
+    printf("  %s: ", vp->name);
+    
+    //iterate over adjacency list
+    for (adj_v = vp->adj_list; adj_v != NULL; adj_v = adj_v->next) {
+      printf("%s(%d) ", adj_v->vertex->name, adj_v->edge_weight);
+    }
+
+    printf("\n");
+  }
+
+  /* print out our tour path list */
+  printf("\nTour path:\n  ");
+
+  vertex_t *cursor;
+
+  for (cursor = tour_path; cursor != NULL; cursor = cursor->next)
+    printf("%s ", cursor->name);
+  
+  printf("\n");
+
+  /* print out our adjacency list */
+  printf("\nTour length: %d\n", distance);
+
+
 }
 
 void free_adj(adj_vertex_t *target) {
