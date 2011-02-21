@@ -150,9 +150,12 @@ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist
 
     //already toured
     if (subtraction == NULL) {
-        return 0;
+      subtraction = NULL; 
+      return 0;
     }
-        
+    
+    //free mem
+    subtraction = NULL;
 
     adj_vertex_t *cursor;
     int a;
@@ -165,7 +168,7 @@ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist
 	return a;
     }
 
-    return 0;
+    return dist;
 }
 
 
