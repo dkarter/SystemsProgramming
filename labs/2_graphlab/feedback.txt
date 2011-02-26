@@ -1,0 +1,13 @@
+20/20 points: Graph construction
+
+
+7/10 points: Tour search
+Failed in some cases
+
+
+9/10 points: Memory allocation & Code modularity
+
+Total: 36/40
+
+Comments:
+
