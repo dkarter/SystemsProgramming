@@ -166,23 +166,27 @@ void eval(char *cmdline)
   pid_t pid;
   char *argv[MAXLINE];
   int bg = parseline(cmdline, argv);
+
   //check if built in command
   if (!builtin_cmd(argv)) {
+    
     //fork new process (gets pid at parent)
     if ((pid = fork()) == 0) {
+    
       //if failed execution than report invalid command
       if (execvp(argv[0], argv) < 0) {
-	printf("Command not found!\n");
+	printf("%s: Command not found\n", argv[0]);
 	exit(0);
       }
+
     }
-    addjob(jobs, pid, FG, cmdline);
+    addjob(jobs, pid, bg?BG:FG, cmdline);
+    
+    //handle background jobs
+    if (!bg) {
+      waitfg(pid);
+    }
   }
-
-  if (!bg) {
-    waitfg(pid);
-  }
-
   return;
 }
 
@@ -270,8 +274,8 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
-  wait(NULL);
-    return;
+  while (fgpid(jobs) == pid)
+    sleep(1);
 }
 
 /*****************
@@ -289,9 +293,10 @@ void sigchld_handler(int sig)
 {
   //1. wait
   //2. delete job
-  wait(NULL);
-  deletejob(jobs, sig);
-  printf("Job %d terminated by sigchld.\n", sig);
+  int stat;
+  pid_t pid = waitpid(-1, &stat, 0);
+  deletejob(jobs, pid);
+  //printf("Job (%d) terminated by sigchld with status: %d.\n", pid, stat);
     return;
 }
 
@@ -302,6 +307,7 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
+  printf("SIGINT recieved.\n");
     return;
 }
 
