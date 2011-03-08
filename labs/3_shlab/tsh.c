@@ -308,7 +308,7 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
-  printf("SIGINT Recieved.\n");
+  printf("\nSIGINT Recieved.\n");
   kill(fgpid(jobs), SIGINT);
   deletejob(jobs, fgpid(jobs));
   printf("Job deleted\n");
@@ -321,7 +321,7 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig) 
 {
-  printf("SIGTSTP Recieved\n");
+  printf("\nSIGTSTP Recieved.\n");
   printf("fg: %d\n", fgpid(jobs));
 
   //forward signal
