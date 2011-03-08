@@ -266,6 +266,7 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv) 
 {
+  
     return;
 }
 
@@ -307,8 +308,10 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
-  printf("SIGINT recieved.\n");
-    return;
+  printf("SIGINT Recieved.\n");
+  kill(fgpid(jobs), SIGINT);
+  deletejob(jobs, fgpid(jobs));
+  printf("Job deleted\n");
 }
 
 /*
@@ -318,8 +321,20 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig) 
 {
-    return;
+  printf("SIGTSTP Recieved\n");
+  printf("fg: %d\n", fgpid(jobs));
+
+  //forward signal
+  kill(fgpid(jobs), SIGTSTP);
+  
+  //change job status in list to stoppped
+  struct job_t *job = getjobpid(jobs, fgpid(jobs));
+  job->state = ST;
+
+  //return to tsh prompt
+  printf("fg: %d\n", fgpid(jobs));
 }
+
 
 /*********************
  * End signal handlers
