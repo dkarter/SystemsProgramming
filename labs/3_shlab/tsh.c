@@ -321,18 +321,20 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig) 
 {
-  printf("\nSIGTSTP Recieved.\n");
-  printf("fg: %d\n", fgpid(jobs));
+
+  struct job_t *job = getjobpid(jobs, fgpid(jobs));
+
 
   //forward signal
-  kill(fgpid(jobs), SIGTSTP);
+  kill(fgpid(jobs), SIGSTOP);
   
   //change job status in list to stoppped
-  struct job_t *job = getjobpid(jobs, fgpid(jobs));
   job->state = ST;
 
+  printf("\nJob [%d] (%d) stopped by signal %d\n", job->jid, job->pid, sig);
+  
   //return to tsh prompt
-  printf("fg: %d\n", fgpid(jobs));
+ 
 }
 
 
