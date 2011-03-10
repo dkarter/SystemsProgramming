@@ -1,5 +1,5 @@
 /* 
- * tsh - A tiny shell program with job control
+ * Tsh - A tiny shell program with job control
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -182,10 +182,11 @@ void eval(char *cmdline)
     }
     addjob(jobs, pid, bg?BG:FG, cmdline);
     
-    //handle background jobs
-    if (!bg) {
+    //handle background/foreground jobs
+    if (!bg)
       waitfg(pid);
-    }
+    else
+      printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline); 
   }
   return;
 }
@@ -275,8 +276,13 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
-  while (fgpid(jobs) == pid)
-    sleep(1);
+   while (fgpid(jobs) == pid)
+     sleep(1);
+ 
+  /*int status;
+  if(waitpid(pid, &status, 0) < 0)
+    printf("waitfg: waitpid error\n");
+  */
 }
 
 /*****************
