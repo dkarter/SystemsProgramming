@@ -10,6 +10,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 /* Misc manifest constants */
 #define MAXLINE    1024   /* max line size */
@@ -149,7 +151,8 @@ int main(int argc, char **argv)
 
     exit(0); /* control never reaches here */
 }
-  
+
+
 /* 
  * eval - Evaluate the command line that the user has just typed in
  * 
@@ -166,13 +169,25 @@ void eval(char *cmdline)
   pid_t pid;
   char *argv[MAXLINE];
   int bg = parseline(cmdline, argv);
+  sigset_t sigmask;
 
   //check if built in command
-  if (!builtin_cmd(argv)) {
+  if (!builtin_cmd(argv) && argv[0] != NULL) {
     
+    //block SIGCHLD signals to avoid conflicts when deleting a job
+    sigemptyset(&sigmask); //init empty signal set
+    sigaddset(&sigmask, SIGCHLD); //add the sigchld to the set
+    
+    if (sigprocmask(SIG_BLOCK, &sigmask, NULL) < 0) //attempt block
+      unix_error("Blocking signal error");
+	
+      
     //fork new process (gets pid at parent)
     if ((pid = fork()) == 0) {
-    
+      //unblock SIGCHLD on child
+      if (sigprocmask(SIG_UNBLOCK, &sigmask, NULL) < 0)
+	unix_error("Unblock signal error");
+      
       //if failed execution than report invalid command
       if (execvp(argv[0], argv) < 0) {
 	printf("%s: Command not found\n", argv[0]);
@@ -180,12 +195,16 @@ void eval(char *cmdline)
       }
 
     }
+
     addjob(jobs, pid, bg?BG:FG, cmdline);
     
+    //unblock sigchld
+    sigprocmask(SIG_UNBLOCK, &sigmask, NULL);
+	
     //handle background/foreground jobs
     if (!bg)
       waitfg(pid);
-    else
+    else if (bg && pid != 0)
       printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline); 
   }
   return;
@@ -239,7 +258,7 @@ int parseline(const char *cmdline, char **argv)
     argv[argc] = NULL;
     
     if (argc == 0)  /* ignore blank line */
-	return 1;
+		return 1;
 
     /* should the job run in the background? */
     if ((bg = (*argv[argc-1] == '&')) != 0) {
@@ -254,11 +273,17 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-  if (strcmp(argv[0], "quit") == 0)
+  if (argv[0] == NULL)
+    return 1;
+  else if (strcmp(argv[0], "quit") == 0) // quit command
     exit(0);
-  else if (strcmp(argv[0], "jobs") == 0) {
+  else if (strcmp(argv[0], "jobs") == 0) { //display jobs
     listjobs(jobs);
+    return 1;
   }
+  else if (strcmp(argv[0], "&") == 0) //ignore singleton
+    return 1;
+
   return 0;     /* not a builtin command */
 }
 
@@ -267,7 +292,7 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv) 
 {
-  
+  // send SIGCONT to process on argv (pid/jid)
     return;
 }
 
@@ -301,10 +326,14 @@ void sigchld_handler(int sig)
   //1. wait
   //2. delete job
   int stat;
-  pid_t pid = waitpid(-1, &stat, 0);
-  deletejob(jobs, pid);
-  //printf("Job (%d) terminated by sigchld with status: %d.\n", pid, stat);
-    return;
+  pid_t pid;
+  while ((pid = waitpid(-1, &stat, 0)) > 0)
+    deletejob(jobs, pid);
+  
+  if (errno != ECHILD)
+    unix_error("waitpid error");
+  
+  return;
 }
 
 /* 
