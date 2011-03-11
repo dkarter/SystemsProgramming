@@ -29,4 +29,4 @@ struct adj_vertex {
  * `v2_name`: the name of the second vertex of the edge to add
  * `weight` : the weight of the edge to add
  */
-void add_edge (vertex_t **vtxhead, char *v1_name, char *v2_name, int weight);
+ void add_edge (vertex_t **vtxhead, char *v1_name, char *v2_name, int weight);

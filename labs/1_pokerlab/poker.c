@@ -311,6 +311,8 @@ int get_rank (hand_t hand, hand_t against) {
  * the highcards are a draw, compare the next set of highcards, and so forth.
  */
 int compare_highcards (hand_t h1, hand_t h2) {
+  //assume both hands a similar
+  
   // sort both hands first
   sort_hand(h1);
   sort_hand(h2);
