@@ -1,6 +1,7 @@
 /* forward declarations so self-referential structures are simpler */
 typedef struct vertex vertex_t;
 typedef struct adj_vertex adj_vertex_t;
+typedef struct tour_info tour_info_t;
 
 struct vertex {
 	char *name;
@@ -14,6 +15,10 @@ struct adj_vertex {
 	adj_vertex_t *next;	
 };
 
+struct tour_info {
+    vertex_t *path;
+    int total_distance;
+};
 /* This is the one function you really should implement as part of your 
  * graph data structure's public API. 
  *
@@ -30,3 +35,29 @@ struct adj_vertex {
  * `weight` : the weight of the edge to add
  */
  void add_edge (vertex_t **vtxhead, char *v1_name, char *v2_name, int weight);
+<<<<<<< HEAD
+=======
+
+void print_out (vertex_t *head, vertex_t *tour_path, int distance);
+
+ vertex_t **graph_last (vertex_t **vtxhead);
+
+ vertex_t *graph_contains (vertex_t *vtxhead, char *name);
+
+ vertex_t *vtx_insert(vertex_t **head, char *name);
+ void adj_insert(vertex_t *parent, vertex_t *child, int weight);
+
+ int graph_size(vertex_t *head);
+ int adjlist_size(adj_vertex_t *head);
+
+ void free_adj(adj_vertex_t *target);
+ void free_vtx(vertex_t *target);
+void freemem(vertex_t **target);
+
+ adj_vertex_t **adjlist_last(adj_vertex_t **head);
+ 
+ adj_vertex_t *adjlist_contains (adj_vertex_t *head, char *name);
+ tour_info_t *find_tour(vertex_t *head);
+ int tour_recursive(vertex_t *head, int max_graph_size, vertex_t **path, int dist);
+ 
+>>>>>>> c5c47e3a87e5e5048fc15dbed71d1a3ca9b17f6a

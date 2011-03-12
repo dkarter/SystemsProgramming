@@ -1,5 +1,5 @@
 /* 
- * tsh - A tiny shell program with job control
+ * Tsh - A tiny shell program with job control
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +10,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 /* Misc manifest constants */
 #define MAXLINE    1024   /* max line size */
@@ -149,7 +151,8 @@ int main(int argc, char **argv)
 
     exit(0); /* control never reaches here */
 }
-  
+
+
 /* 
  * eval - Evaluate the command line that the user has just typed in
  * 
@@ -163,7 +166,48 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-    return;
+  pid_t pid;
+  char *argv[MAXLINE];
+  int bg = parseline(cmdline, argv);
+  sigset_t sigmask;
+
+  //check if built in commnd
+  if (!builtin_cmd(argv) && argv[0] != NULL) {
+    
+    //block SIGCHLD signals to avoid conflicts when deleting a job
+    sigemptyset(&sigmask); //init empty signal set
+    sigaddset(&sigmask, SIGCHLD); //add the sigchld to the set
+    
+    if (sigprocmask(SIG_BLOCK, &sigmask, NULL) < 0) //attempt block
+      unix_error("Blocking signal error");
+	
+      
+    //fork new process (gets pid at parent)
+    if ((pid = fork()) == 0) {
+      //unblock SIGCHLD on child
+      if (sigprocmask(SIG_UNBLOCK, &sigmask, NULL) < 0)
+	unix_error("Unblock signal error");
+      
+      //if failed execution than report invalid command
+      if (execvp(argv[0], argv) < 0) {
+	printf("%s: Command not found\n", argv[0]);
+	exit(0);
+      }
+
+    }
+
+    addjob(jobs, pid, bg?BG:FG, cmdline);
+    
+    //unblock sigchld
+    sigprocmask(SIG_UNBLOCK, &sigmask, NULL);
+	
+    //handle background/foreground jobs
+    if (!bg)
+      waitfg(pid);
+    else if (bg && pid != 0)
+      printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline); 
+  }
+  return;
 }
 
 /* 
@@ -214,7 +258,7 @@ int parseline(const char *cmdline, char **argv)
     argv[argc] = NULL;
     
     if (argc == 0)  /* ignore blank line */
-	return 1;
+		return 1;
 
     /* should the job run in the background? */
     if ((bg = (*argv[argc-1] == '&')) != 0) {
@@ -229,7 +273,22 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-    return 0;     /* not a builtin command */
+  if (argv[0] == NULL)
+    return 1;
+  else if (strcmp(argv[0], "quit") == 0) // quit command
+    exit(0);
+  else if (strcmp(argv[0], "jobs") == 0) { //display jobs
+    listjobs(jobs);
+    return 1;
+  }
+  else if (strcmp(argv[0], "fg") == 0 || strcmp(argv[0], "bg") == 0) {
+    do_bgfg(argv);
+    return 1;
+  }
+  else if (strcmp(argv[0], "&") == 0) //ignore singleton
+    return 1;
+
+  return 0;     /* not a builtin command */
 }
 
 /* 
@@ -237,6 +296,7 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv) 
 {
+  // send SIGCONT to process on argv (pid/jid)
     return;
 }
 
@@ -245,7 +305,13 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
-    return;
+   while (fgpid(jobs) == pid)
+     sleep(1);
+ 
+  /*int status;
+  if(waitpid(pid, &status, 0) < 0)
+    printf("waitfg: waitpid error\n");
+  */
 }
 
 /*****************
@@ -261,7 +327,34 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
-    return;
+
+  int stat;
+  pid_t pid;
+  struct job_t *job; 
+
+  while ((pid = waitpid(-1, &stat, 0)) > 0)
+    if (WIFEXITED(stat))
+      deletejob(jobs, pid);
+    else if (WIFSTOPPED(stat)) {
+      //change job status in list to stoppped
+      job = getjobpid(jobs, fgpid(jobs));
+      job->state = ST;
+       
+      printf("\nJob [%d] (%d) stopped by signal %d\n", job->jid, job->pid, sig);
+    }
+    else if (WIFSIGNALED(stat)) {
+      //delete job - terminated by signal
+      deletejob(jobs, pid);
+      printf("\nJob [%d] (%d) terminated by signal %d\n", pid2jid(pid), pid, sig);
+    }
+
+  
+  //if an error occured with the waitpid and it's not "no more children to reap" 
+  //then report it to user
+  if (errno != ECHILD)
+    unix_error("waitpid error");
+  
+  return;
 }
 
 /* 
@@ -271,7 +364,16 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
-    return;
+  
+  pid_t pid;
+  if ((pid = fgpid(jobs)) == 0) {
+    printf("\n");
+    exit(0); //was sent to parent
+  }
+  else
+    kill(pid, SIGINT); //forward to child
+  
+  return;
 }
 
 /*
@@ -281,8 +383,27 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig) 
 {
-    return;
+
+  
+  // first check who was it sent to, if there's
+  // an acive foregroud proc we can assume that
+  // it was the target otherwise it was sent to
+  // the shell itself and we need to block the 
+  // signal handler? and use alarm to resend it
+  // to ourselves
+ 
+  pid_t pid;
+  if ((pid = fgpid(jobs)) == 0)
+    exit(0); //was sent to parent
+  else
+    //forward signal
+    kill(fgpid(jobs), SIGSTOP);
+  
+  return;  
+  //return to tsh prompt
+ 
 }
+
 
 /*********************
  * End signal handlers
