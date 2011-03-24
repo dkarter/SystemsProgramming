@@ -85,6 +85,13 @@ void app_error(char *msg);
 typedef void handler_t(int);
 handler_t *Signal(int signum, handler_t *handler);
 
+/* some user functions */
+pid_t Fork();
+void Sigaddset(sigset_t *set, int signo);
+void Sigemptyset(sigset_t *set);
+void Sigprocmask(int how, const sigset_t *set, sigset_t *oset);
+void Kill(pid_t pid, int signo);
+
 /*
  * main - The shell's main routine 
  */
@@ -153,6 +160,42 @@ int main(int argc, char **argv)
 }
 
 
+void Sigprocmask(int how, const sigset_t *set, sigset_t *oset)
+{
+   if (sigprocmask(how, set, oset) < 0) //attempt block
+     unix_error("Blocking signal error"); //report if failed
+
+   return;
+}
+
+
+void Sigemptyset(sigset_t *set)
+{
+  if (sigemptyset(set) < 0) //attempt set empty
+     unix_error("Initializing empty signal set error"); //report if failed
+
+   return;
+}
+
+
+void Sigaddset(sigset_t *set, int signo)
+{
+  if (sigaddset(set, signo) < 0) //attempt set add
+     unix_error("Adding a signal to signal set error"); //report if failed
+
+   return;
+}
+
+
+pid_t Fork()
+{
+  pid_t pid;
+  if ((pid = fork()) < 0)
+    unix_error("fork error");
+  return pid;
+}
+
+
 /* 
  * eval - Evaluate the command line that the user has just typed in
  * 
@@ -172,24 +215,22 @@ void eval(char *cmdline)
   sigset_t sigmask;
 
   //check if built in commnd
-  if (!builtin_cmd(argv) && argv[0] != NULL) {
+  if (!builtin_cmd(argv)) {
     
     //block SIGCHLD signals to avoid conflicts when deleting a job
-    sigemptyset(&sigmask); //init empty signal set
-    sigaddset(&sigmask, SIGCHLD); //add the sigchld to the set
+    Sigemptyset(&sigmask); //init empty signal set
+    Sigaddset(&sigmask, SIGCHLD); //add the sigchld to the set
     
-    if (sigprocmask(SIG_BLOCK, &sigmask, NULL) < 0) //attempt block
-      unix_error("Blocking signal error");
+    Sigprocmask(SIG_BLOCK, &sigmask, NULL);
 	
       
     //fork new process (gets pid at parent)
-    if ((pid = fork()) == 0) {
+    if ((pid = Fork()) == 0) {
       //unblock SIGCHLD on child
-      if (sigprocmask(SIG_UNBLOCK, &sigmask, NULL) < 0)
-	unix_error("Unblock signal error");
+      Sigprocmask(SIG_UNBLOCK, &sigmask, NULL);
       
       //if failed execution than report invalid command
-      if (execvp(argv[0], argv) < 0) {
+      if (execve(argv[0], argv, environ) < 0) {
 	printf("%s: Command not found\n", argv[0]);
 	exit(0);
       }
@@ -199,13 +240,13 @@ void eval(char *cmdline)
     addjob(jobs, pid, bg?BG:FG, cmdline);
     
     //unblock sigchld
-    sigprocmask(SIG_UNBLOCK, &sigmask, NULL);
+    Sigprocmask(SIG_UNBLOCK, &sigmask, NULL);
 	
     //handle background/foreground jobs
     if (!bg)
-      waitfg(pid);
+      waitfg(pid); //wait for forground job to stop or terminate
     else if (bg && pid != 0)
-      printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline); 
+      printf("[%d] (%d) %s", pid2jid(pid), pid, cmdline); //kust notify, dont wait
   }
   return;
 }
@@ -297,7 +338,56 @@ int builtin_cmd(char **argv)
 void do_bgfg(char **argv) 
 {
   // send SIGCONT to process on argv (pid/jid)
+  //first we need to realize if bg or fg
+  //then we need to figure out if we were supplied with 
+  //a jid or a pid
+  //use identifier  to get job obj
+  //send signal SIGCONT to pid (obtained from job obj if we have jid)
+  //change the status to BG or FG in job obj
+  struct job_t *job;
+  char *arg_id = argv[1];
+  int jid;
+  pid_t pid;
+  int bg = !strcmp(argv[0], "bg");
+  
+  //if it starts with a % character than it's a jid
+  if (arg_id[0] == '%') {
+    //we have a jid! yay!
+    //extract jid first (convert to int)
+    jid = atoi(arg_id + sizeof(char));
+    
+    //check if numeric and valid
+    if(jid == 0 || (job = getjobjid(jobs, jid)) == NULL) { 
+      //not numeric or job doesn't exist
+      printf("%s: No such job\n", argv[1]);
+      return;
+    } 
+  } else if ((pid = atoi(arg_id)) != 0) {
+    //we have a pid
+    job = getjobpid(jobs, pid);
+  } else {
+    //not a pid or a jid - notify user.
+    printf("%s: argument must be a PID or %%jobid\n", argv[1]);
     return;
+  }
+
+  //so now we have the job let's do some magic
+  //first try to send a SIGCONT
+  Kill(-(job->pid), SIGCONT);
+
+  //modify job object accordingly
+  if (bg) {
+    // change job state to background and just let it run
+    job->state = BG;
+    printf("[%d] (%d) %s\n", job->jid, job->pid, job->cmdline);
+  } else {
+    //change state to foreground
+    job->state = FG;
+    //since job is now in foreground we need to wait for it.
+    waitfg(job->pid);
+  }
+
+  return;
 }
 
 /* 
@@ -305,25 +395,34 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
-   while (fgpid(jobs) == pid)
-     sleep(1);
- 
-  /*int status;
-  if(waitpid(pid, &status, 0) < 0)
-    printf("waitfg: waitpid error\n");
-  */
+
+  //int i;
+  while (fgpid(jobs) == pid)
+    //call multiple times to make sure scheduler catches the sleep
+    // for (i = 0; i < 5; i++)
+      sleep(1); //context switches
+
+  //don't forget to return
+  return;
 }
 
 /*****************
- * Signal handlers
+ *Signal handlers
  *****************/
+
+void Kill(pid_t pid, int signo) 
+{
+  if (kill(pid, signo) < 0)
+    unix_error("kill error");
+  return;
+}
 
 /* 
  * sigchld_handler - The kernel sends a SIGCHLD to the shell whenever
  *     a child job terminates (becomes a zombie), or stops because it
  *     received a SIGSTOP or SIGTSTP signal. The handler reaps all
  *     available zombie children, but doesn't wait for any other
- *     currently running children to terminate.  
+ *     Currently running children to terminate.  
  */
 void sigchld_handler(int sig) 
 {
@@ -332,7 +431,7 @@ void sigchld_handler(int sig)
   pid_t pid;
   struct job_t *job; 
 
-  while ((pid = waitpid(-1, &stat, 0)) > 0)
+  while ((pid = waitpid(-1, &stat, WNOHANG | WUNTRACED)) > 0)
     if (WIFEXITED(stat))
       deletejob(jobs, pid);
     else if (WIFSTOPPED(stat)) {
@@ -340,18 +439,22 @@ void sigchld_handler(int sig)
       job = getjobpid(jobs, fgpid(jobs));
       job->state = ST;
        
-      printf("\nJob [%d] (%d) stopped by signal %d\n", job->jid, job->pid, sig);
+      printf("\nJob [%d] (%d) stopped by signal %d\n", job->jid, job->pid, WSTOPSIG(stat));
     }
     else if (WIFSIGNALED(stat)) {
+      //get signal # of terminating signal
+      //print first cause we  want the pid2jid to work and we can avoid storing it
+      printf("\nJob [%d] (%d) terminated by signal %d\n", pid2jid(pid), pid, WTERMSIG(stat));
       //delete job - terminated by signal
       deletejob(jobs, pid);
-      printf("\nJob [%d] (%d) terminated by signal %d\n", pid2jid(pid), pid, sig);
-    }
-
+    } 
+    else
+      unix_error("waitpid error");
+  
   
   //if an error occured with the waitpid and it's not "no more children to reap" 
   //then report it to user
-  if (errno != ECHILD)
+  if (!((pid == 0) || (pid == -1 && errno == ECHILD)))
     unix_error("waitpid error");
   
   return;
@@ -366,12 +469,8 @@ void sigint_handler(int sig)
 {
   
   pid_t pid;
-  if ((pid = fgpid(jobs)) == 0) {
-    printf("\n");
-    exit(0); //was sent to parent
-  }
-  else
-    kill(pid, SIGINT); //forward to child
+  if ((pid = fgpid(jobs)) > 0)
+    Kill(-pid, SIGINT); //forward to child
   
   return;
 }
@@ -388,16 +487,11 @@ void sigtstp_handler(int sig)
   // first check who was it sent to, if there's
   // an acive foregroud proc we can assume that
   // it was the target otherwise it was sent to
-  // the shell itself and we need to block the 
-  // signal handler? and use alarm to resend it
-  // to ourselves
- 
+  // the shell itself and we shall ignore it
   pid_t pid;
-  if ((pid = fgpid(jobs)) == 0)
-    exit(0); //was sent to parent
-  else
+  if ((pid = fgpid(jobs)) > 0)
     //forward signal
-    kill(fgpid(jobs), SIGSTOP);
+    Kill(-pid, SIGTSTP);
   
   return;  
   //return to tsh prompt
@@ -518,6 +612,7 @@ struct job_t *getjobjid(struct job_t *jobs, int jid)
 	    return &jobs[i];
     return NULL;
 }
+
 
 /* pid2jid - Map process ID to job ID */
 int pid2jid(pid_t pid) 
