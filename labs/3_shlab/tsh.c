@@ -362,9 +362,10 @@ void do_bgfg(char **argv)
       printf("%s: No such job\n", argv[1]);
       return;
     } 
-  } else if ((pid = atoi(arg_id)) != 0) {
-    //we have a pid
-    job = getjobpid(jobs, pid);
+  } else if ((pid = atoi(arg_id)) == 0 || (job = getjobpid(jobs, pid)) == NULL) {
+    //process id was invalid or not found in jobs list
+    printf("(%s): No such process\n", argv[1]);
+    return;
   } else {
     //not a pid or a jid - notify user.
     printf("%s: argument must be a PID or %%jobid\n", argv[1]);
@@ -373,7 +374,7 @@ void do_bgfg(char **argv)
 
   //so now we have the job let's do some magic
   //first try to send a SIGCONT
-  Kill(-(job->pid), SIGCONT);
+  Kill((job->pid), SIGCONT);
 
   //modify job object accordingly
   if (bg) {
@@ -395,6 +396,9 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
+  //first we have to check if the job exists so we don't waste our time
+  if (getjobpid(jobs, pid) == NULL)
+    return; //job not found
 
   //int i;
   while (fgpid(jobs) == pid)
@@ -412,7 +416,8 @@ void waitfg(pid_t pid)
 
 void Kill(pid_t pid, int signo) 
 {
-  if (kill(pid, signo) < 0)
+  //check if job exists or signal is failing to send
+  if (getjobpid(jobs, pid) != NULL && kill(-pid, signo) < 0)
     unix_error("kill error");
   return;
 }
@@ -470,7 +475,7 @@ void sigint_handler(int sig)
   
   pid_t pid;
   if ((pid = fgpid(jobs)) > 0)
-    Kill(-pid, SIGINT); //forward to child
+    Kill(pid, SIGINT); //forward to child
   
   return;
 }
@@ -491,7 +496,7 @@ void sigtstp_handler(int sig)
   pid_t pid;
   if ((pid = fgpid(jobs)) > 0)
     //forward signal
-    Kill(-pid, SIGTSTP);
+    Kill(pid, SIGTSTP);
   
   return;  
   //return to tsh prompt
