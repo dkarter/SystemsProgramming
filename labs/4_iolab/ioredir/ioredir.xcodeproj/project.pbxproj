@@ -1,0 +1,195 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B731E28113400C3B0081A317 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		B731E28313400C3B0081A317 /* ioredir */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ioredir; sourceTree = BUILT_PRODUCTS_DIR; };
+		B731E28913400C3C0081A317 /* ioredir.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ioredir.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B731E28013400C3B0081A317 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B731E27813400C3B0081A317 = {
+			isa = PBXGroup;
+			children = (
+				B731E28613400C3C0081A317 /* ioredir */,
+				B731E28413400C3B0081A317 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B731E28413400C3B0081A317 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B731E28313400C3B0081A317 /* ioredir */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B731E28613400C3C0081A317 /* ioredir */ = {
+			isa = PBXGroup;
+			children = (
+				B731E28913400C3C0081A317 /* ioredir.1 */,
+			);
+			path = ioredir;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B731E28213400C3B0081A317 /* ioredir */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B731E28C13400C3C0081A317 /* Build configuration list for PBXNativeTarget "ioredir" */;
+			buildPhases = (
+				B731E27F13400C3B0081A317 /* Sources */,
+				B731E28013400C3B0081A317 /* Frameworks */,
+				B731E28113400C3B0081A317 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ioredir;
+			productName = ioredir;
+			productReference = B731E28313400C3B0081A317 /* ioredir */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B731E27A13400C3B0081A317 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = SpiralTex;
+			};
+			buildConfigurationList = B731E27D13400C3B0081A317 /* Build configuration list for PBXProject "ioredir" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = B731E27813400C3B0081A317;
+			productRefGroup = B731E28413400C3B0081A317 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B731E28213400C3B0081A317 /* ioredir */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B731E27F13400C3B0081A317 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B731E28A13400C3C0081A317 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		B731E28B13400C3C0081A317 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B731E28D13400C3C0081A317 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B731E28E13400C3C0081A317 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B731E27D13400C3B0081A317 /* Build configuration list for PBXProject "ioredir" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B731E28A13400C3C0081A317 /* Debug */,
+				B731E28B13400C3C0081A317 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B731E28C13400C3C0081A317 /* Build configuration list for PBXNativeTarget "ioredir" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B731E28D13400C3C0081A317 /* Debug */,
+				B731E28E13400C3C0081A317 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B731E27A13400C3B0081A317 /* Project object */;
+}
